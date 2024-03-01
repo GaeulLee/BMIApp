@@ -10,59 +10,38 @@ import UIKit
 struct CalculateBMIManager {
     
     // 계산된 BMI 담을 변수
-    var bmi: Double?
+    var bmi: BMI?
     
-    
-    // BMI 계산
     // ⭐️mutating 키워드: 속성을 변경하는 함수를 쓸 때 써줘야 함
-    mutating func calculateBMI(height: String, weight: String) {
+    // 계산된 BMI 및 변경 정보를 VC에게 전달하는 메서드
+    mutating func getBMI(height: String, weight: String) -> BMI {
+        calculateBMI(height: height, weight: weight) //
+        return bmi ?? BMI(value: 0.0, labelColor: .white, comment: "error") // 만약 bmi가 nil일 경우 ?? 뒤 반환!
+    }
+    
+    // BMI 계산하는 내부 메서드(계산 및 레이블 색상, 코멘트)
+    mutating private func calculateBMI(height: String, weight: String) {
         guard let h = Double(height), let w = Double(weight) else {
-            bmi = 0.0
+            bmi = BMI(value: 0.0, labelColor: .white, comment: "error")
             return
         }
-        bmi = round((w / pow(h/100, 2)) * 100 / 100)
-    }
-    
-    // 계산된 BMI VC에게 전달할 함수
-    func getBMIResult() -> Double {
-        return bmi ?? 0.0 // 만약 bmi가 nil일 경우 0.0 반환!
-    }
+        
+        var bmiNum = round((w / pow(h/100, 2)) * 100 / 100)
 
-    // 레이블 색상 설정
-    func getLabelText() -> String {
-        guard let bmi = bmi else { return "" }
-        switch bmi {
+        switch bmiNum {
         case ..<18.6:
-            return "저체중"
+            bmi = BMI(value: bmiNum, labelColor: .cyan, comment: "저체중")
         case 18.6..<23.0:
-            return "표준"
+            bmi = BMI(value: bmiNum, labelColor: .green, comment: "표준")
         case 23.0..<25.0:
-            return "과체중"
+            bmi = BMI(value: bmiNum, labelColor: .magenta, comment: "과체중")
         case 25.0..<30.0:
-            return "중도비만"
+            bmi = BMI(value: bmiNum, labelColor: .orange, comment: "중도비만")
         case 30.0...:
-            return "고도비만"
+            bmi = BMI(value: bmiNum, labelColor: .red, comment: "고도비만")
         default:
-            return ""
+            bmi = BMI(value: 0.0, labelColor: .white, comment: "error")
         }
     }
 
-    // 레이블 배경 색상 설정
-    func getLabelBackColor() -> UIColor {
-        guard let bmi = bmi else { return .black }
-        switch bmi {
-        case ..<18.6:
-            return .cyan
-        case 18.6..<23.0:
-            return .green
-        case 23.0..<25.0:
-            return .magenta
-        case 25.0..<30.0:
-            return .orange
-        case 30.0...:
-            return .red
-        default:
-            return .black
-        }
-    }
 }

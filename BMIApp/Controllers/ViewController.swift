@@ -39,8 +39,7 @@ class ViewController: UIViewController {
 
     
     @IBAction func calculateBMIButton(_ sender: UIButton) {
-        
-        bmiManager.calculateBMI(height: heightTextField.text!, weight: weightTextField.text!)
+        //bmiManager.calculateBMI(height: heightTextField.text!, weight: weightTextField.text!)
     }
     
     
@@ -57,10 +56,7 @@ class ViewController: UIViewController {
     override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
         if segue.identifier == "resultVC" {
             let resultVC = segue.destination as! ResultViewController
-            
-            resultVC.bmi = bmiManager.getBMIResult()
-            resultVC.comment = bmiManager.getLabelText()
-            resultVC.color = bmiManager.getLabelBackColor()
+            resultVC.bmi = bmiManager.getBMI(height: heightTextField.text!, weight: weightTextField.text!)
             
             heightTextField.text = ""
             weightTextField.text = ""
