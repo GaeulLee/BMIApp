@@ -13,8 +13,9 @@ class ViewController: UIViewController {
     @IBOutlet weak var heightTextField: UITextField!
     @IBOutlet weak var weightTextField: UITextField!
     @IBOutlet weak var calculateBtn: UIButton!
+
+    var bmiManager = CalculateBMIManager() // model을 사용허기 위해 인스턴스 생성
     
-    var bmi: Double?
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -39,55 +40,9 @@ class ViewController: UIViewController {
     
     @IBAction func calculateBMIButton(_ sender: UIButton) {
         
-        guard let height = heightTextField.text,
-              let weight = weightTextField.text
-        else { return }
-        
-        bmi = calculateBMI(height: height, weight: weight)
+        bmiManager.calculateBMI(height: heightTextField.text!, weight: weightTextField.text!)
     }
     
-    func calculateBMI(height: String, weight: String) -> Double {
-        guard let h = Double(height), let w = Double(weight)
-        else { return 0.0 }
-        
-        return round((w / pow(h/100, 2)) * 100 / 100)
-    }
-    
-    func changeLabelText() -> String {
-        guard let bmi = bmi else { return "" }
-        switch bmi {
-        case ..<18.6:
-            return "저체중"
-        case 18.6..<23.0:
-            return "표준"
-        case 23.0..<25.0:
-            return "과체중"
-        case 25.0..<30.0:
-            return "중도비만"
-        case 30.0...:
-            return "고도비만"
-        default:
-            return ""
-        }
-    }
-    
-    func changeLabelBackColor() -> UIColor {
-        guard let bmi = bmi else { return .black }
-        switch bmi {
-        case ..<18.6:
-            return .cyan
-        case 18.6..<23.0:
-            return .green
-        case 23.0..<25.0:
-            return .magenta
-        case 25.0..<30.0:
-            return .orange
-        case 30.0...:
-            return .red
-        default:
-            return .black
-        }
-    }
     
     // check validation
     override func shouldPerformSegue(withIdentifier identifier: String, sender: Any?) -> Bool {
@@ -103,9 +58,9 @@ class ViewController: UIViewController {
         if segue.identifier == "resultVC" {
             let resultVC = segue.destination as! ResultViewController
             
-            resultVC.bmi = self.bmi
-            resultVC.comment = changeLabelText()
-            resultVC.color = changeLabelBackColor()
+            resultVC.bmi = bmiManager.getBMIResult()
+            resultVC.comment = bmiManager.getLabelText()
+            resultVC.color = bmiManager.getLabelBackColor()
             
             heightTextField.text = ""
             weightTextField.text = ""
